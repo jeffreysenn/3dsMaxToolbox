@@ -4,6 +4,8 @@ This script automatically snaps UV islands' vertices together.
 It is helpful when users want to stack/overlap UV islands to save texture space.
 */
 
+fileIn "Functions.ms"
+
 Rollout OverlapUVSnapper "Overlap UV Snapper"
 (
 	--draw UI
@@ -13,50 +15,9 @@ Rollout OverlapUVSnapper "Overlap UV Snapper"
 	spinner threshold "Threshold: " range:[0,100,0.1] type:#float 
 	button snap "Snap"
 	button resetSnap "Reset"
-
-	--struct to store index number and point3 position of vertices collections
-	struct vertexInfo (index, position)
 	
-	local unwrapper =$.Unwrap_UVW
 	--changeable and target vertices collections
 	local changeable, target
-	
-	--snap changeable vertices to target vertices if close enough
-	fn snapToTarget= 
-	(
-		for i in 1 to changeable.index.count do
-		(
-			for j in 1 to target.index.count do
-			(
-				local dis = distance changeable.position[i] target.position[j]
-				if dis < threshold.value then
-				(
-					unwrapper.setVertexPosition currentTime changeable.index[i] target.position[j]
-				)
-			)
-		)
-	)
-	
-	--collect index number and point3 position of the selected vertices
-	fn collectVertexInfo =
-	(
-		local collection = vertexInfo()
-		--add each vertex's index number to the index array
-		collection.index = unwrapper.getSelectedVertices() as Array
-		--loop through the index array, and add each vertex's point3 position to the position array
-		collection.position = for i in 1 to collection.index.count collect 
-			unwrapper.getVertexPosition currentTime collection.index[i]
-		return collection
-	)
-	
-	--reset the snapped vertices to original position
-	fn resetPosition = 
-	(
-		for indexNum in changeable.index do 
-		(
-			unwrapper.setVertexPosition currentTime indexNum changeable.position[indexNum]
-		)
-	)
 
 	on selectTarget pressed do
 	(
@@ -81,7 +42,7 @@ Rollout OverlapUVSnapper "Overlap UV Snapper"
 		--check if target and changeable collections are defined
 		if target != undefined and changeable != undefined do
 		(
-			snapToTarget()
+			snapToTarget changeable target threshold.value
 		)
 	)
 	
@@ -93,7 +54,8 @@ Rollout OverlapUVSnapper "Overlap UV Snapper"
 	
 	on resetSnap pressed do 
 	(
-		resetPosition()
+		--reset the positions of the vertices in the changeable collection
+		resetPosition changeable
 	)
 	
 )
