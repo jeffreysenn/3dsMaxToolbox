@@ -3,6 +3,8 @@
 	--struct to store index number and point3 position of vertices collections
 	struct vertexInfo (index, position)
 	
+	global unwrapper = $.Unwrap_UVW
+	
 	--snap origin vertices to destination vertices if closer than threshold
 	fn snapToTarget origin destin threshold= 
 	(
@@ -13,7 +15,7 @@
 				local dist = distance origin.position[i] destin.position[j]
 				if dist < threshold then
 				(
-					$.Unwrap_UVW.setVertexPosition currentTime origin.index[i] destin.position[j]
+					unwrapper.setVertexPosition currentTime origin.index[i] destin.position[j]
 				)
 			)
 		)
@@ -24,18 +26,18 @@
 	(
 		local collection = vertexInfo()
 		--add each vertex's index number to the index array
-		collection.index = $.Unwrap_UVW.getSelectedVertices() as Array
+		collection.index = unwrapper.getSelectedVertices() as Array
 		--loop through the index array, and add each vertex's point3 position to the position array
 		collection.position = for i in 1 to collection.index.count collect 
-			$.Unwrap_UVW.getVertexPosition currentTime collection.index[i]
+			unwrapper.getVertexPosition currentTime collection.index[i]
 		return collection
 	)
 	
 	--reset the snapped vertices to original position
 	fn resetPosition collection= 
 	(
-		for indexNum in collection.index do 
+		for i in 1 to collection.index.count do 
 		(
-			$.Unwrap_UVW.setVertexPosition currentTime indexNum collection.position[indexNum]
+			unwrapper.setVertexPosition currentTime collection.index[i] collection.position[i]
 		)
 	)
