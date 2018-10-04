@@ -6,6 +6,7 @@ It is helpful when users want to stack/overlap UV islands to save texture space.
 
 Rollout OverlapUVSnapper "Overlap UV Snapper"
 (
+	--draw UI
 	button selectTarget "Select Target Island"
 	checkbox autoTarget "Auto Target"
 	button selectChangeable "Select Changeable Island(s)"
@@ -13,11 +14,14 @@ Rollout OverlapUVSnapper "Overlap UV Snapper"
 	button snap "Snap"
 	button resetSnap "Reset"
 
+	--struct to store index number and point3 position of vertices collections
 	struct vertexInfo (index, position)
 	
 	local unwrapper =$.Unwrap_UVW
+	--changeable and target vertices collections
 	local changeable, target
 	
+	--snap changeable vertices to target vertices if close enough
 	fn snapToTarget= 
 	(
 		for i in 1 to changeable.index.count do
@@ -33,15 +37,19 @@ Rollout OverlapUVSnapper "Overlap UV Snapper"
 		)
 	)
 	
+	--collect index number and point3 position of the selected vertices
 	fn collectVertexInfo =
 	(
 		local collection = vertexInfo()
+		--add each vertex's index number to the index array
 		collection.index = unwrapper.getSelectedVertices() as Array
+		--loop through the index array, and add each vertex's point3 position to the position array
 		collection.position = for i in 1 to collection.index.count collect 
 			unwrapper.getVertexPosition currentTime collection.index[i]
 		return collection
 	)
 	
+	--reset the snapped vertices to original position
 	fn resetPosition = 
 	(
 		for indexNum in changeable.index do 
@@ -52,13 +60,16 @@ Rollout OverlapUVSnapper "Overlap UV Snapper"
 
 	on selectTarget pressed do
 	(
+		--feed target collection with vertex info
 		target = collectVertexInfo()
 	)
 		
 	on selectChangeable pressed do
 	(
+		--feed changeable collection with vertex info
 		changeable = collectVertexInfo()
 		
+		--set target to changeable if autoTarget is checked
 		if autoTarget.state == true do
 		(
 			target = changeable
@@ -67,6 +78,7 @@ Rollout OverlapUVSnapper "Overlap UV Snapper"
 
 	on snap pressed do 
 	(
+		--check if target and changeable collections are defined
 		if target != undefined and changeable != undefined do
 		(
 			snapToTarget()
@@ -75,6 +87,7 @@ Rollout OverlapUVSnapper "Overlap UV Snapper"
 	
 	on autoTarget changed theState do
 	(
+		--en/dis able the selectTarget button
 		selectTarget.enabled = not autoTarget.state
 	)	
 	
