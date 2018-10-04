@@ -4,13 +4,14 @@ This script automatically snaps UV islands' vertices together.
 It is helpful when users want to stack/overlap UV islands to save texture space.
 */
 
-Rollout OverlapUVSnapper "OverlapUVSnapper"
+Rollout OverlapUVSnapper "Overlap UV Snapper"
 (
 	button selectTarget "Select Target Island"
 	checkbox autoTarget "Auto Target"
 	button selectChangeable "Select Changeable Island(s)"
 	spinner threshold "Threshold: " range:[0,100,0.1] type:#float 
 	button snap "Snap"
+	button resetSnap "Reset"
 
 	struct vertexInfo (index, position)
 	
@@ -40,6 +41,14 @@ Rollout OverlapUVSnapper "OverlapUVSnapper"
 			unwrapper.getVertexPosition currentTime collection.index[i]
 		return collection
 	)
+	
+	fn resetPosition = 
+	(
+		for indexNum in changeable.index do 
+		(
+			unwrapper.setVertexPosition currentTime indexNum changeable.position[indexNum]
+		)
+	)
 
 	on selectTarget pressed do
 	(
@@ -68,6 +77,11 @@ Rollout OverlapUVSnapper "OverlapUVSnapper"
 	(
 		selectTarget.enabled = not autoTarget.state
 	)	
+	
+	on resetSnap pressed do 
+	(
+		resetPosition()
+	)
 	
 )
 
