@@ -3,7 +3,8 @@
 	--struct to store index number and point3 position of vertices collections
 	struct vertexInfo (index, position)
 	
-	global unwrapper = $.Unwrap_UVW
+	setCommandPanelTaskMode #modify
+	global unwrapper = modpanel.getCurrentObject()
 	
 	--snap origin vertices to destination vertices if closer than threshold
 	fn snapToTarget origin destin threshold= 
