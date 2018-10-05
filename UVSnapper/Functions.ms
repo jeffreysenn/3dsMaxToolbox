@@ -1,44 +1,44 @@
 --This script contains all the functions for OverlapUVSnapper's main script 
 	
-	--struct to store index number and point3 position of vertices collections
+	--struct to store index number and point3 position of a vertex
 	struct vertexInfo (index, position)
 	
+	--assgin the modifier to unwrapper
 	setCommandPanelTaskMode #modify
 	global unwrapper = modpanel.getCurrentObject()
 	
 	--snap origin vertices to destination vertices if closer than threshold
 	fn snapToTarget origin destin threshold= 
 	(
-		for i in 1 to origin.index.count do
+		for oVertex in origin do
 		(
-			for j in 1 to destin.index.count do
+			for dVertex in destin do
 			(
-				local dist = distance origin.position[i] destin.position[j]
+				local dist = distance oVertex.position dVertex.position
 				if dist < threshold then
 				(
-					unwrapper.setVertexPosition currentTime origin.index[i] destin.position[j]
+					unwrapper.setVertexPosition currentTime oVertex.index dVertex.position
 				)
 			)
 		)
 	)
 	
-	--collect index number and point3 position of the selected vertices
+	--collect index number and point3 position of the selected vertices and make them into an array
 	fn collectVertexInfo =
 	(
-		local collection = vertexInfo()
-		--add each vertex's index number to the index array
-		collection.index = unwrapper.getSelectedVertices() as Array
-		--loop through the index array, and add each vertex's point3 position to the position array
-		collection.position = for i in 1 to collection.index.count collect 
-			unwrapper.getVertexPosition currentTime collection.index[i]
+		local indexCollection = unwrapper.getSelectedVertices() as Array
+		local collection = for index in indexCollection collect 
+			vertexInfo index:index \
+			position:(unwrapper.getVertexPosition currentTime index)
+		
 		return collection
 	)
 	
 	--reset the snapped vertices to original position
 	fn resetPosition collection= 
 	(
-		for i in 1 to collection.index.count do 
+		for vertex in collection do 
 		(
-			unwrapper.setVertexPosition currentTime collection.index[i] collection.position[i]
+			unwrapper.setVertexPosition currentTime vertex.index vertex.position
 		)
 	)

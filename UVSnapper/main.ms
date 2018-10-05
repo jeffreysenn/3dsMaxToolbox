@@ -21,13 +21,13 @@ Rollout OverlapUVSnapper "Overlap UV Snapper"
 
 	on selectTarget pressed do
 	(
-		--feed target collection with vertex info
+		--assgin collected vertex info array to target
 		target = collectVertexInfo()
 	)
 		
 	on selectChangeable pressed do
 	(
-		--feed changeable collection with vertex info
+		--assgin collected vertex info array to changeable
 		changeable = collectVertexInfo()
 		
 		--set target to changeable if autoTarget is checked
