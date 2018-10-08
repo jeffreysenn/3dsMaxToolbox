@@ -1,50 +1,65 @@
 /*
 Written by Jeffrey Xiaoyue Chen
+Email: xiaoyue_chen@outlook.com
+
 This script automatically snaps UV islands' vertices together. 
 It is helpful when users want to stack/overlap UV islands to save texture space.
 */
 
-Rollout OverlapUVSnapper "OverlapUVSnapper"
+fileIn "Functions.ms"
+
+Rollout OverlapUVSnapper "Overlap UV Snapper"
 (
-	button selectTarget "Select Target Island"
-	button selectChangeable "Select Changeable Island(s)"
-	spinner threshold "Threshold: " range:[0,100,0.1] type:#float 
+	--draw UI
+	button selectTarget "Summit Target"
+	checkbox autoTarget "Auto Target"
+	button selectChangeable "Summit Changeable"
+	spinner threshold "Threshold: " range:[0,100,0.01] type:#float 
 	button snap "Snap"
+	button resetSnap "Reset"
+	
+	--changeable and target vertices collections
+	local changeable, target
 
-	local unwrapper =$.Unwrap_UVW
-	local target, changeable
-	local targetPos, changeablePos
-
-	-- Store the target 
 	on selectTarget pressed do
 	(
-		target = unwrapper.getSelectedVertices() as Array
-		targetPos = for i in 1 to target.count collect 
-			Unwrapper.getVertexPosition currentTime target[i]
+		--assgin collected vertex info array to target
+		target = collectVertexInfo()
 	)
 		
 	on selectChangeable pressed do
 	(
-		changeable = unwrapper.getSelectedVertices() as Array
-		changeablePos = for i in 1 to changeable.count collect 
-			Unwrapper.getVertexPosition currentTime changeable[i]
+		--assgin collected vertex info array to changeable
+		changeable = collectVertexInfo()
+		
+		--set target to changeable if autoTarget is checked
+		if autoTarget.state == true do
+		(
+			target = changeable
+		)
 	)
 
 	on snap pressed do 
 	(
-		for i in 1 to changeable.count do
+		--check if target and changeable collections are defined
+		if target != undefined and changeable != undefined do
 		(
-			for j in 1 to target.count do
-			(
-				local dis = distance changeablePos[i] targetPos[j]
-				if dis < threshold.value then
-				(
-					unwrapper.setVertexPosition currentTime changeable[i] targetPos[j]
-				)
-			)
+			snapToTarget changeable target threshold.value
 		)
 	)
-
+	
+	on autoTarget changed theState do
+	(
+		--en/dis able the selectTarget button
+		selectTarget.enabled = not autoTarget.state
+	)	
+	
+	on resetSnap pressed do 
+	(
+		--reset the positions of the vertices in the changeable collection
+		resetPosition changeable
+	)
+	
 )
 
 createDialog OverlapUVSnapper
