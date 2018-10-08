@@ -7,6 +7,8 @@
 	setCommandPanelTaskMode #modify
 	global unwrapper = modpanel.getCurrentObject()
 	
+	
+
 	--snap origin vertices to destination vertices if closer than threshold
 	fn snapToTarget origin destin threshold= 
 	(
@@ -14,22 +16,34 @@
 		(
 			for dVertex in destin do
 			(
-				local dist = distance oVertex.position dVertex.position
+				local dist = distance (point3ToPoint2 oVertex.position) (point3ToPoint2 dVertex.position)
+				--print("Between " + dist as string)
 				if dist < threshold then
 				(
-					unwrapper.setVertexPosition currentTime oVertex.index dVertex.position
+					unwrapper.setVertexPosition currentTime oVertex.index \
+					(convertDestinPosition oVertex.position dVertex.position)
 				)
 			)
 		)
 	)
+	
+	fn point3ToPoint2 p3 = 
+	(
+		return [p3.x, p3.y]
+	)
+	
+	fn convertDestinPosition originPos destinPos= 
+	(
+		return [destinPos.x, destinPos.y, originPos.z]
+	)
+	
 	
 	--collect index number and point3 position of the selected vertices and make them into an array
 	fn collectVertexInfo =
 	(
 		local indexCollection = unwrapper.getSelectedVertices() as Array
 		local collection = for index in indexCollection collect 
-			vertexInfo index:index \
-			position:(unwrapper.getVertexPosition currentTime index)
+			vertexInfo index:index position:(unwrapper.getVertexPosition currentTime index)
 		
 		return collection
 	)

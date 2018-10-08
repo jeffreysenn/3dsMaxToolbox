@@ -9,10 +9,10 @@ fileIn "Functions.ms"
 Rollout OverlapUVSnapper "Overlap UV Snapper"
 (
 	--draw UI
-	button selectTarget "Select Target Island"
+	button selectTarget "Summit Target"
 	checkbox autoTarget "Auto Target"
-	button selectChangeable "Select Changeable Island(s)"
-	spinner threshold "Threshold: " range:[0,100,0.1] type:#float 
+	button selectChangeable "Summit Changeable"
+	spinner threshold "Threshold: " range:[0,100,0.01] type:#float 
 	button snap "Snap"
 	button resetSnap "Reset"
 	
@@ -35,6 +35,9 @@ Rollout OverlapUVSnapper "Overlap UV Snapper"
 		(
 			target = changeable
 		)
+		
+		print ("changeable: " + changeable as string)
+		print("target: " + target as string)
 	)
 
 	on snap pressed do 
