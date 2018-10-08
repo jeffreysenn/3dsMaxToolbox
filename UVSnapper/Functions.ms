@@ -14,16 +14,17 @@
 	(
 		for oVertex in origin do
 		(
+			local destinPos
 			for dVertex in destin do
 			(
 				local dist = distance (point3ToPoint2 oVertex.position) (point3ToPoint2 dVertex.position)
 				--print("Between " + dist as string)
-				if dist < threshold then
+				if dist < threshold do
 				(
-					unwrapper.setVertexPosition currentTime oVertex.index \
-					(convertDestinPosition oVertex.position dVertex.position)
+					destinPos = convertDestinPosition oVertex.position dVertex.position					
 				)
 			)
+			unwrapper.setVertexPosition currentTime oVertex.index destinPos
 		)
 	)
 	
