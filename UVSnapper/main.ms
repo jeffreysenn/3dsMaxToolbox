@@ -1,5 +1,7 @@
 /*
 Written by Jeffrey Xiaoyue Chen
+Email: xiaoyue_chen@outlook.com
+
 This script automatically snaps UV islands' vertices together. 
 It is helpful when users want to stack/overlap UV islands to save texture space.
 */
@@ -35,9 +37,6 @@ Rollout OverlapUVSnapper "Overlap UV Snapper"
 		(
 			target = changeable
 		)
-		
-		print ("changeable: " + changeable as string)
-		print("target: " + target as string)
 	)
 
 	on snap pressed do 

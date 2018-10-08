@@ -18,7 +18,6 @@
 			for dVertex in destin do
 			(
 				local dist = distance (point3ToPoint2 oVertex.position) (point3ToPoint2 dVertex.position)
-				--print("Between " + dist as string)
 				if dist < threshold do
 				(
 					destinPos = convertDestinPosition oVertex.position dVertex.position					
